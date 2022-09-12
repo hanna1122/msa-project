@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: eureka-server
+  config:
+    import: configserver:${CONFIG_SERVER_URI:http://host.docker.internal:8071}
+    fail-fast: true
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+server:
+  port: 8761
