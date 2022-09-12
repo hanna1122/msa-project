@@ -1,0 +1,62 @@
+version: "3.9"
+services:
+  configserver:
+    image: configserver:0.0.1-SNAPSHOT
+    restart: on-failure
+    ports:
+      - "8071:8071"
+    networks:
+      backend:
+        aliases:
+          - "configserver"
+
+  eurekaserver:
+    image: eurekaserver:0.0.1-SNAPSHOT
+    depends_on:
+      - configserver
+    restart: on-failure
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8071"
+    ports:
+      - "8761:8761"
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver"
+
+  user:
+    image: user:0.0.1-SNAPSHOT
+    depends_on:
+      - configserver
+      - eurekaserver
+    restart: on-failure
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8071"
+      EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+    ports:
+      - "8081:8081"
+    networks:
+      backend:
+        aliases:
+          - "user"
+
+  gym:
+    image: gym:0.0.1-SNAPSHOT
+    depends_on:
+      - configserver
+      - eurekaserver
+    restart: on-failure
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8071"
+      EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+    ports:
+      - "8082:8082"
+    networks:
+      backend:
+        aliases:
+          - "gym"
+
+networks:
+  backend:
+    driver: bridge
+    external: true
