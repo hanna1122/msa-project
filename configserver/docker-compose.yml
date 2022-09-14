@@ -24,6 +24,22 @@ services:
         aliases:
           - "eurekaserver"
 
+  gateway:
+    image: gateway:0.0.1-SNAPSHOT
+    depends_on:
+      - configserver
+      - eurekaserver
+    restart: on-failure
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8071"
+      EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+    ports:
+      - "8072:8072"
+    networks:
+      backend:
+        aliases:
+          - "gateway"
+
   user:
     image: user:0.0.1-SNAPSHOT
     depends_on:
@@ -34,7 +50,7 @@ services:
       CONFIG_SERVER_URI: "http://configserver:8071"
       EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
     ports:
-      - "8081:8081"
+      - "8081:8072"
     networks:
       backend:
         aliases:
