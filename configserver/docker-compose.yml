@@ -66,11 +66,27 @@ services:
       CONFIG_SERVER_URI: "http://configserver:8071"
       EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
     ports:
-      - "8082:8082"
+      - "8082:8072"
     networks:
       backend:
         aliases:
           - "gym"
+
+  trainer:
+    image: trainer:0.0.1-SNAPSHOT
+    depends_on:
+      - configserver
+      - eurekaserver
+    restart: on-failure
+    environment:
+      CONFIG_SERVER_URI: "http://configserver:8071"
+      EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+    ports:
+      - "8083:8072"
+    networks:
+      backend:
+        aliases:
+          - "trainer"
 
 networks:
   backend:
