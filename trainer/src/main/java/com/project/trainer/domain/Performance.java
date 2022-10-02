@@ -9,6 +9,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @Embeddable
 public class Performance {
-    public String performance;
-    public int lessonCount;
+    public Long amount;
+    public Long lessonCount;
 }
