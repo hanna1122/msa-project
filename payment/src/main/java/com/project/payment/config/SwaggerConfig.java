@@ -32,8 +32,8 @@ public class SwaggerConfig {
                 .addSecurityItem(schemaRequirement)
                 .security(Arrays.asList(schemaRequirement))
                 .servers(List.of(server))
-                .info(new Info().title("Payment-service")
-                        .description("결제 API 서비스입니다.")
+                .info(new Info().title("Payment Service API")
+                        .description("MSA - Payment Service입니다.")
                         .version("v0.0.1"));
     }
 }
