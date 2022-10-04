@@ -1,6 +1,7 @@
 package com.project.trainer.controller;
 
 import com.project.trainer.Service.LessonService;
+import com.project.trainer.domain.LessonType;
 import com.project.trainer.domain.Lessons;
 import com.project.trainer.dto.LessonDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +60,8 @@ public class LessonController {
         private String trainerId;
         private String lessonName;
         private Long price;
+        private Long count;
+        private LessonType lessonType;
         private LocalDate startDate;
         private LocalDate endDate;
 
@@ -67,6 +70,8 @@ public class LessonController {
             this.trainerId = lessonDto.getTrainerId();
             this.lessonName = lessonDto.getLessonName();
             this.price = lessonDto.getPrice();
+            this.count = lessonDto.getCount();
+            this.lessonType = lessonDto.getLessonType();
             this.startDate = lessonDto.getStartDate();
             this.endDate = lessonDto.getEndDate();
         }

@@ -32,6 +32,11 @@ public class Lessons {
 
     private Long price;
 
+    private Long count;
+
+    @Enumerated(EnumType.STRING)
+    private LessonType lessonType;
+
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate startDate;
 
@@ -48,6 +53,8 @@ public class Lessons {
         this.trainerId = lessonDto.getTrainerId();
         this.lessonName = lessonDto.getLessonName();
         this.price = lessonDto.getPrice();
+        this.count = lessonDto.getCount();
+        this.lessonType = lessonDto.getLessonType();
         this.startDate = lessonDto.getStartDate();
         this.endDate = lessonDto.getEndDate();
     }

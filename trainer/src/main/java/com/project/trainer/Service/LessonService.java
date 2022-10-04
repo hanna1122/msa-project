@@ -17,6 +17,8 @@ public class LessonService {
                 .trainerId(userId)
                 .lessonName(lessonDto.getLessonName())
                 .price(lessonDto.getPrice())
+                .lessonType(lessonDto.getLessonType())
+                .count(lessonDto.getCount())
                 .startDate(lessonDto.getStartDate())
                 .endDate(lessonDto.getEndDate())
                 .build();

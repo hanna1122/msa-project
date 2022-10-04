@@ -1,5 +1,6 @@
 package com.project.trainer.dto;
 
+import com.project.trainer.domain.LessonType;
 import com.project.trainer.domain.Lessons;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,10 @@ public class LessonDto {
 
     private Long price;
 
+    private Long count;
+
+    private LessonType lessonType;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -30,6 +35,8 @@ public class LessonDto {
                 .trainerId(lessons.getTrainerId())
                 .lessonName(lessons.getLessonName())
                 .price(lessons.getPrice())
+                .count(lessons.getCount())
+                .lessonType(lessons.getLessonType())
                 .startDate(lessons.getStartDate())
                 .endDate(lessons.getEndDate())
                 .build();
