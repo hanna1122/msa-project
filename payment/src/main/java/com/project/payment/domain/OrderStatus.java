@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum OrderStatus {
     PLACED("주문신청"),
     FINISHED("주문완료"),
-    FAILED("실패");
+    CANCEL("주문취소"),
+    FAILED("주문실패");
 
     private String message;
 

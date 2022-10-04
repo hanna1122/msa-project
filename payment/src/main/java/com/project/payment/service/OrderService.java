@@ -2,7 +2,9 @@ package com.project.payment.service;
 
 import com.project.payment.domain.Order;
 import com.project.payment.domain.OrderStatus;
+import com.project.payment.feign.dto.LessonResponse;
 import com.project.payment.dto.OrderDto;
+import com.project.payment.feign.client.TrainerServiceClient;
 import com.project.payment.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +16,16 @@ public class OrderService {
 
     public final OrderRepository orderRepository;
 
+    private final TrainerServiceClient trainerServiceClient;
 
     public Order saveOrder(OrderDto orderDto, String userId){
+        LessonResponse lessonResponse = trainerServiceClient.getLesson(orderDto.getLessonId());
 
         OrderDto dto = OrderDto.builder()
                 .userId(userId)
                 .lessonId(orderDto.getLessonId())
-                .lessonName(orderDto.getLessonName())
-                .lessonPrice(orderDto.getPrice())
+                .lessonName(lessonResponse.getLessonName())
+                .lessonPrice(lessonResponse.getPrice())
                 .paymentType(orderDto.getPaymentType())
                 .build();
         return orderRepository.save(new Order(dto));
