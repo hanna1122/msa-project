@@ -1,16 +1,15 @@
 package com.project.user.service;
 
-import com.project.user.Repository.UserRepository;
+import com.project.user.repository.UserRepository;
 import com.project.user.domain.Users;
-import com.project.user.dto.LoginDto;
 import com.project.user.dto.SignupDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,5 +40,12 @@ public class UserServiceTest {
         assertEquals(users.getUserId(), userId);
         assertTrue(passwordEncoder.matches(password,users.getPassword()));
         assertEquals(users.getName(), name);
+    }
+
+    @Test
+    public void getUserTest(){
+        String userId="test12";
+        userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
