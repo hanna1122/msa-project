@@ -9,6 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDto {
+    private Long id;
+
     private String userId;
 
     private Long lessonId;
