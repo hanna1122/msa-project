@@ -6,6 +6,9 @@ import com.project.trainer.repository.LessonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class LessonService {
@@ -29,6 +32,13 @@ public class LessonService {
         Lessons lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
         return LessonDto.create(lesson);
+    }
+
+    public List<LessonDto> findLessons(){
+        return lessonRepository.findAll()
+                .stream()
+                .map(LessonDto::of)
+                .collect(Collectors.toList());
     }
 
 }

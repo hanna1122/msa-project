@@ -41,4 +41,17 @@ public class LessonDto {
                 .endDate(lessons.getEndDate())
                 .build();
     }
+
+    public static LessonDto of(Lessons lessons){
+        LessonDto lessonsDto = new LessonDto();
+        lessonsDto.id = lessons.getId();
+        lessonsDto.trainerId = lessons.getTrainerId();
+        lessonsDto.lessonName = lessons.getLessonName();
+        lessonsDto.lessonType = lessons.getLessonType();
+        lessonsDto.price = lessons.getPrice();
+        lessonsDto.count = lessons.getCount();
+        lessonsDto.startDate = lessons.getStartDate();
+        lessonsDto.endDate = lessons.getEndDate();
+        return lessonsDto;
+    }
 }

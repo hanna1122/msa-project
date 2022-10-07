@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name="수업관리", description="수업관리 api")
 @RestController
@@ -37,7 +38,7 @@ public class LessonController {
         return ResponseEntity.ok(lesson);
     }
 
-    @Operation(summary = "수업조회",
+    @Operation(summary = "수업상세조회",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Lessons.class))),
                     @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
@@ -75,5 +76,19 @@ public class LessonController {
             this.startDate = lessonDto.getStartDate();
             this.endDate = lessonDto.getEndDate();
         }
+    }
+
+    @Operation(summary = "수업목록조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Lessons.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @GetMapping("/trainer-service/lesson")
+    public ResponseEntity getLessons(){
+        List<LessonDto> lessons = lessonService.findLessons();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(lessons);
     }
 }
