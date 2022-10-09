@@ -31,7 +31,7 @@ public class LessonService {
     public LessonDto getLesson(Long lessonId){
         Lessons lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
-        return LessonDto.create(lesson);
+        return LessonDto.of(lesson);
     }
 
     public List<LessonDto> findLessons(){

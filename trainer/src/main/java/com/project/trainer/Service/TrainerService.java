@@ -1,7 +1,10 @@
 package com.project.trainer.Service;
 
+import com.project.trainer.domain.Performance;
 import com.project.trainer.domain.Trainers;
+import com.project.trainer.dto.PerformanceDto;
 import com.project.trainer.dto.TrainerDto;
+import com.project.trainer.repository.PerformanceRepository;
 import com.project.trainer.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -18,6 +21,8 @@ import java.util.Collections;
 public class TrainerService implements UserDetailsService {
 
     public final TrainerRepository trainerRepository;
+
+    public final PerformanceRepository performanceRepository;
 
     public final PasswordEncoder passwordEncoder;
 
@@ -39,5 +44,9 @@ public class TrainerService implements UserDetailsService {
                 true, true, true, true,
                 Collections.emptyList()
         );
+    }
+
+    public Performance addPerformance(PerformanceDto performanceDto){
+        return performanceRepository.save(new Performance(performanceDto));
     }
 }
