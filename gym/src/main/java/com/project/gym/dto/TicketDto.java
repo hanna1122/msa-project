@@ -1,5 +1,6 @@
 package com.project.gym.dto;
 
+import com.project.gym.domain.Ticket;
 import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TicketDto {
+
+    private Long id;
 
     private String userId;
 
@@ -45,6 +48,15 @@ public class TicketDto {
                 .orderId(orderRequest.getId())
                 .lessonId(lessonResponse.getId())
                 .count(lessonResponse.getCount())
+                .build();
+    }
+
+    public static TicketDto of(Ticket ticket){
+        return TicketDto.builder()
+                .id(ticket.getId())
+                .userId(ticket.getUserId())
+                .lessonId(ticket.getLessonId())
+                .count(ticket.getPersonalUser().getCount())
                 .build();
     }
 }
