@@ -25,7 +25,7 @@ public class CommonController {
                     @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
             }
     )
-    @GetMapping("/user-service/healthCheck")
+    @GetMapping("/user-service/user/healthCheck")
     public String healthCheck(){
 
         return String.format("It's working in User Service on PORT %s",
