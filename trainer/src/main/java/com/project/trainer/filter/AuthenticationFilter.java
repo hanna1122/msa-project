@@ -3,6 +3,7 @@ package com.project.trainer.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.trainer.Service.TrainerService;
 import com.project.trainer.dto.LoginDto;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.core.env.Environment;
@@ -55,8 +56,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String userId = ((User) authResult.getPrincipal()).getUsername();
 
+        Claims claims = Jwts.claims().setSubject(userId);
+        claims.put("roles", "ROLE_TRAINER");
+
         String token = Jwts.builder()
-                .setSubject(userId)
+                .addClaims(claims)
                 .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(Objects.requireNonNull(environment.getProperty("token.expiration_time")))))
                 .signWith(SignatureAlgorithm.HS512, environment.getProperty("token.secret"))
                 .compact();
