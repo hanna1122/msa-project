@@ -2,6 +2,7 @@ package com.project.reservation.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.project.reservation.dto.ReservationDto;
+import com.project.reservation.feign.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,13 +52,13 @@ public class Reservation {
     @CreatedDate
     private LocalDateTime regDate;
 
-    public Reservation(ReservationDto dto, String userId){
-        this.ticketId = dto.getTicketId();
-        this.lessonId = dto.getLessonId();
-        this.reservatorId = userId;
-        this.reservatorName = dto.getReservatorName();
-        this.reservationDate = dto.getReservationDate();
-        this.reservationTime = dto.getReservationTime();
+    public Reservation(ReservationDto reservationDto, UserResponse userResponse){
+        this.ticketId = reservationDto.getTicketId();
+        this.lessonId = reservationDto.getLessonId();
+        this.reservatorId = userResponse.getUserId();
+        this.reservatorName = userResponse.getName();
+        this.reservationDate = reservationDto.getReservationDate();
+        this.reservationTime = reservationDto.getReservationTime();
         this.reservationStatus = ReservationStatus.PLACED;
     }
 
