@@ -1,5 +1,6 @@
 package com.project.gym.service;
 
+import com.project.gym.domain.Attendance;
 import com.project.gym.domain.Ticket;
 import com.project.gym.dto.TicketDto;
 import com.project.gym.feign.client.TrainerServiceClient;
@@ -8,6 +9,7 @@ import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
 import com.project.gym.message.event.UserTypeUpdatedEvent;
 import com.project.gym.repository.AttendanceRepository;
+import com.project.gym.repository.AttendanceRepositoryCustom;
 import com.project.gym.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,9 @@ public class GymService {
 
         UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
         streamBridge.send("userTypeUpdated", event);
+//                        .withPayload(event)
+//                        .setHeader(KafkaHeaders.MESSAGE_KEY, userId)
+//                        .build());
         log.info("userType-updated 이벤트 발신 : {} ", event);
 
         return ticketRepository.save(saveTicket);
@@ -61,5 +66,21 @@ public class GymService {
                 .orElseThrow(()-> new RuntimeException("ticketId에 해당하는 이용권 없음"));
 
         return TicketDto.of(ticket);
+    }
+
+    public Attendance saveAttendance(String userId){
+
+        Attendance attendance = Attendance.builder()
+                .userId(userId)
+                .build();
+        return attendanceRepository.save(attendance);
+    }
+
+    public Ticket updateCount(TicketDto ticketDto, String userId){
+        TicketDto updateCount = getTicket(ticketDto.getId());
+        Long count = updateCount.getCount() - 1;
+        updateCount.setCount(count);
+
+        return ticketRepository.save(Ticket.personalTicket(ticketDto));
     }
 }

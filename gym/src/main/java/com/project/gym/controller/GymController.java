@@ -1,5 +1,6 @@
 package com.project.gym.controller;
 
+import com.project.gym.domain.Attendance;
 import com.project.gym.domain.Ticket;
 import com.project.gym.dto.TicketDto;
 import com.project.gym.feign.dto.OrderRequest;
@@ -56,6 +57,27 @@ public class GymController {
     public ResponseEntity<TicketDto> getTicket(@PathVariable("ticketId") Long ticketId,
                                            @RequestHeader(value = "user-id") String userId){
         TicketDto ticket = gymService.getTicket(ticketId);
+        return ResponseEntity.ok(ticket);
+    }
+
+    @Operation(summary = "출석체크",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Attendance.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @PostMapping("/gym-service/attendance")
+    public ResponseEntity<Attendance> saveAttendance(@RequestHeader(value = "user-id") String userId){
+        Attendance attendance = gymService.saveAttendance(userId);
+        return ResponseEntity.ok(attendance);
+    }
+
+
+    @PostMapping("/gym-service/count")
+    public ResponseEntity<Ticket> updateCount(@RequestBody TicketDto TicketDto,
+                                             @RequestHeader(value = "user-id") String userId){
+        Ticket ticket = gymService.updateCount(TicketDto, userId);
         return ResponseEntity.ok(ticket);
     }
 
