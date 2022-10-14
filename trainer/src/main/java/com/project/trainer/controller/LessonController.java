@@ -3,7 +3,9 @@ package com.project.trainer.controller;
 import com.project.trainer.Service.LessonService;
 import com.project.trainer.domain.LessonType;
 import com.project.trainer.domain.Lessons;
+import com.project.trainer.domain.Record;
 import com.project.trainer.dto.LessonDto;
+import com.project.trainer.dto.RecordDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -90,5 +92,20 @@ public class LessonController {
         List<LessonDto> lessons = lessonService.findLessons();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(lessons);
+    }
+
+    @Operation(summary = "수업일지 등록",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @PostMapping("/trainer-service/record")
+    public ResponseEntity saveRecord(@RequestBody RecordDto recordDto,
+                                     @RequestHeader(value = "user-id") String trainerId){
+        Record record = lessonService.saveRecord(recordDto, trainerId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(record);
     }
 }

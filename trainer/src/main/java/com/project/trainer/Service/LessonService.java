@@ -1,8 +1,11 @@
 package com.project.trainer.Service;
 
 import com.project.trainer.domain.Lessons;
+import com.project.trainer.domain.Record;
 import com.project.trainer.dto.LessonDto;
+import com.project.trainer.dto.RecordDto;
 import com.project.trainer.repository.LessonRepository;
+import com.project.trainer.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
 public class LessonService {
 
     public final LessonRepository lessonRepository;
+
+    public final RecordRepository recordRepository;
 
     public Lessons saveLesson(LessonDto lessonDto, String userId){
         LessonDto dto = LessonDto.builder()
@@ -39,6 +44,11 @@ public class LessonService {
                 .stream()
                 .map(LessonDto::of)
                 .collect(Collectors.toList());
+    }
+
+    public Record saveRecord(RecordDto recordDto, String trainerId){
+
+        return recordRepository.save(new Record(recordDto, trainerId));
     }
 
 }
