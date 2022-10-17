@@ -3,10 +3,7 @@ package com.project.gym.dto;
 import com.project.gym.domain.Ticket;
 import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TicketDto {
 
     private Long id;
@@ -26,6 +24,7 @@ public class TicketDto {
 
     private Long count;
 
+    private String useYn;
 
     private LocalDate startDate;
 
@@ -57,6 +56,11 @@ public class TicketDto {
                 .userId(ticket.getUserId())
                 .lessonId(ticket.getLessonId())
                 .count(ticket.getPersonalUser().getCount())
+                .useYn(ticket.getUseYn())
                 .build();
+    }
+
+    public void setCount(Long count){
+        this.count = count;
     }
 }

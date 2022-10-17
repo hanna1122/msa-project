@@ -29,6 +29,8 @@ public class Ticket {
 
     private Long lessonId;
 
+    private String useYn;
+
     @Enumerated(EnumType.STRING)
     private UserType type;
 
@@ -52,6 +54,7 @@ public class Ticket {
                 .userId(ticketDto.getUserId())
                 .lessonId(ticketDto.getLessonId())
                 .type(UserType.GENERAL)
+                .useYn("Y")
                 .generalUser(new GeneralUser(ticketDto.getStartDate(), ticketDto.getEndDate()))
                 .build();
     }
@@ -61,7 +64,9 @@ public class Ticket {
                 .userId(ticketDto.getUserId())
                 .lessonId(ticketDto.getLessonId())
                 .type(UserType.PERSONAL)
+                .useYn("Y")
                 .personalUser(new PersonalUser(ticketDto.getCount()))
                 .build();
     }
+
 }
