@@ -41,15 +41,14 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             if (!isJwtValid(jwt)) return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
 
             String subject = getUserId(jwt);
+            String role = getRole(jwt);
 
             if (subject.equals("feign")) return chain.filter(exchange);
 
-//            if (false == jwtTokenProvider.getRoles(jwt).contains("Customer")) {
-//                return onError(exchange, "권한 없음", HttpStatus.UNAUTHORIZED);
-//            }
 
             ServerHttpRequest newRequest = request.mutate()
                     .header("user-id", subject)
+                    .header("role", role)
                     .build();
 
             return chain.filter(exchange.mutate().request(newRequest).build());
@@ -78,6 +77,10 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     public String getUserId(String token) {
         return getClaimsFromJwtToken(token).getSubject();
+    }
+
+    public String getRole(String token) {
+        return (String) getClaimsFromJwtToken(token).get("roles");
     }
 
     private Claims getClaimsFromJwtToken(String token) {
