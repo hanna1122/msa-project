@@ -1,3 +1,12 @@
 jwt:
   secretKey: jwtpassword
 
+
+spring:
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.project.gym.message.producer.CustomSerializer
+
+
