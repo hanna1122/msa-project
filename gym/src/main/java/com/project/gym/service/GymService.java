@@ -13,7 +13,7 @@ import com.project.gym.repository.AttendanceRepositoryCustom;
 import com.project.gym.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +30,8 @@ public class GymService {
 
     private final UserServiceClient userServiceClient;
 
-    private final StreamBridge streamBridge;
+    private final KafkaTemplate<String, UserTypeUpdatedEvent> kafkaTemplate;
+
 
     public Ticket saveTicket(OrderRequest orderRequest, String userId){
         LessonResponse lessonResponse = trainerServiceClient.getLesson(orderRequest.getLessonId());
@@ -42,15 +43,11 @@ public class GymService {
             TicketDto personalDto = TicketDto.personalTicket(orderRequest, lessonResponse);
             saveTicket = Ticket.personalTicket(personalDto);
         }
-//        userServiceClient.updateUserType(userId, saveTicket.getType());
 
         UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
-        streamBridge.send("userTypeUpdated", event);
-//                        .withPayload(event)
-//                        .setHeader(KafkaHeaders.MESSAGE_KEY, userId)
-//                        .build());
-        log.info("userType-updated 이벤트 발신 : {} ", event);
 
+        log.info("userType-updated 이벤트 발신 : {} ", event);
+        kafkaTemplate.send("userType-updated-topic", event);
         return ticketRepository.save(saveTicket);
     }
 
@@ -70,6 +67,7 @@ public class GymService {
 
     public Attendance saveAttendance(String userId){
 
+
         Attendance attendance = Attendance.builder()
                 .userId(userId)
                 .build();
@@ -81,6 +79,6 @@ public class GymService {
         Long count = updateCount.getCount() - 1;
         updateCount.setCount(count);
 
-        return ticketRepository.save(Ticket.personalTicket(ticketDto));
+        return ticketRepository.save(Ticket.personalTicket(updateCount));
     }
 }
