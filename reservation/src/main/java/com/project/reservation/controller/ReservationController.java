@@ -36,21 +36,6 @@ public class ReservationController {
         return ResponseEntity.ok(reservation);
     }
 
-    @Operation(summary = "예약상태수정",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Reservation.class))),
-                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
-            }
-    )
-    @PatchMapping("/reservation-service/reservation/{reservationId}")
-    public ResponseEntity<Reservation> updateStatus(@PathVariable("reservationId") Long reservationId,
-                                                    @RequestBody ReservationStatusRequest reservationStatusRequest,
-                                                    @RequestHeader(value = "user-id") String userId){
-        ReservationStatus reservationStatus = reservationStatusRequest.getReservationStatus();
-        Reservation reservationUpdate = reservationService.updateStatus(reservationId, reservationStatus);
-        return ResponseEntity.ok(reservationUpdate);
-    }
 
     @Getter
     @NoArgsConstructor
@@ -67,9 +52,51 @@ public class ReservationController {
             }
     )
     @GetMapping("/reservation-service/reservation/{trainerId}")
-    public ResponseEntity<List> getReservations(@PathVariable("user-id") String trainerId,
+    public ResponseEntity<List> getReservations(@PathVariable("trainerId") Long trainerId,
                                                 @RequestHeader(value = "user-id") String userId){
         List<ReservationDto> reservations = reservationService.findReservations(trainerId);
         return ResponseEntity.ok(reservations);
+    }
+
+    @Operation(summary = "예약상세조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Reservation.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @GetMapping("/reservation-service/reservation")
+    public ResponseEntity<Reservation> getReservation(@RequestBody ReservationDto reservationDto,
+                                                @RequestHeader(value = "user-id") String userId){
+        Reservation reservation = reservationService.getReservation(reservationDto.getId());
+        return ResponseEntity.ok(reservation);
+    }
+
+    @Operation(summary = "예약확정",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Reservation.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @PostMapping("/reservation-service/reservation/confirm/{reservationId}")
+    public ResponseEntity<Reservation> confirmReservation(@PathVariable("reservationId") Long reservationId,
+                                                    @RequestHeader(value = "user-id") String userId){
+        Reservation reservationUpdate = reservationService.confirmReservation(reservationId, userId);
+        return ResponseEntity.ok(reservationUpdate);
+    }
+
+    @Operation(summary = "예약취소",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Reservation.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @PostMapping("/reservation-service/reservation/cancel/{reservationId}")
+    public ResponseEntity<Reservation> cancelReservation(@PathVariable("reservationId") Long reservationId,
+                                                          @RequestHeader(value = "user-id") String userId){
+        Reservation reservationUpdate = reservationService.cancelReservation(reservationId, userId);
+        return ResponseEntity.ok(reservationUpdate);
     }
 }

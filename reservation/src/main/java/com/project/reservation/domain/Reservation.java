@@ -55,6 +55,7 @@ public class Reservation {
     public Reservation(ReservationDto reservationDto, UserResponse userResponse){
         this.ticketId = reservationDto.getTicketId();
         this.lessonId = reservationDto.getLessonId();
+        this.trainerId = reservationDto.getTrainerId();
         this.reservatorId = userResponse.getUserId();
         this.reservatorName = userResponse.getName();
         this.reservationDate = reservationDto.getReservationDate();
