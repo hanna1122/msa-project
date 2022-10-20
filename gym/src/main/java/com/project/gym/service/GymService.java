@@ -1,7 +1,9 @@
 package com.project.gym.service;
 
 import com.project.gym.domain.Attendance;
+import com.project.gym.domain.PersonalUser;
 import com.project.gym.domain.Ticket;
+import com.project.gym.domain.UserType;
 import com.project.gym.dto.TicketDto;
 import com.project.gym.feign.client.TrainerServiceClient;
 import com.project.gym.feign.client.UserServiceClient;
@@ -11,6 +13,7 @@ import com.project.gym.message.event.UserTypeUpdatedEvent;
 import com.project.gym.repository.AttendanceRepository;
 import com.project.gym.repository.AttendanceRepositoryCustom;
 import com.project.gym.repository.TicketRepository;
+import com.project.gym.repository.TicketRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GymService {
     private final TicketRepository ticketRepository;
+
+    private final TicketRepositoryCustom ticketRepositoryCustom;
+
     private final AttendanceRepository attendanceRepository;
 
     private final TrainerServiceClient trainerServiceClient;
@@ -74,11 +80,14 @@ public class GymService {
         return attendanceRepository.save(attendance);
     }
 
-    public Ticket updateCount(TicketDto ticketDto, String userId){
-        TicketDto updateCount = getTicket(ticketDto.getId());
-        Long count = updateCount.getCount() - 1;
-        updateCount.setCount(count);
-
-        return ticketRepository.save(Ticket.personalTicket(updateCount));
+    public void updateCount(Long ticketId, String reservationStatus, String userId){
+        Ticket findTicket = ticketRepositoryCustom.findTicket(ticketId);
+        Long count = findTicket.getPersonalUser().getCount();
+        if (reservationStatus.equals("CANCEL")) {
+            count+=1;
+        }else{
+            count-=1;
+        }
+        ticketRepositoryCustom.updateCount(ticketId, count);
     }
 }

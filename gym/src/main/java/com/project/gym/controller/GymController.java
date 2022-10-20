@@ -10,11 +10,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -74,11 +72,17 @@ public class GymController {
     }
 
 
-    @PostMapping("/gym-service/count")
-    public ResponseEntity<Ticket> updateCount(@RequestBody TicketDto TicketDto,
+    @Transactional
+    public ResponseEntity updateCount(@RequestBody TicketRequest ticketRequest,
                                              @RequestHeader(value = "user-id") String userId){
-        Ticket ticket = gymService.updateCount(TicketDto, userId);
-        return ResponseEntity.ok(ticket);
+        gymService.updateCount(ticketRequest.getId(), ticketRequest.getReservationStatus(), userId);
+        return ResponseEntity.ok("success");
+    }
+
+    @Getter
+    public static class TicketRequest {
+        private Long id;
+        private String reservationStatus;
     }
 
 }
