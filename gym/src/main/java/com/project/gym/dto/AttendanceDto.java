@@ -1,27 +1,21 @@
 package com.project.gym.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class AttendanceDto {
+
+    private Long attendanceId;
+
+    private Long ticketId;
 
     private String userId;
 
-    private Long orderId;
-
-    private Long lessonId;
-
-    private Long count;
-
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
-    private LocalDateTime regDate;
 }

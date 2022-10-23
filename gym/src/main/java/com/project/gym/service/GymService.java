@@ -1,21 +1,23 @@
 package com.project.gym.service;
 
-import com.project.gym.domain.Attendance;
-import com.project.gym.domain.PersonalUser;
-import com.project.gym.domain.Ticket;
-import com.project.gym.domain.UserType;
+import com.project.gym.domain.*;
+import com.project.gym.dto.AttendanceDto;
 import com.project.gym.dto.TicketDto;
 import com.project.gym.feign.client.TrainerServiceClient;
 import com.project.gym.feign.client.UserServiceClient;
 import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
+import com.project.gym.feign.dto.UserResponse;
+import com.project.gym.message.event.PaymentRollbackEvent;
 import com.project.gym.message.event.UserTypeUpdatedEvent;
 import com.project.gym.repository.AttendanceRepository;
 import com.project.gym.repository.AttendanceRepositoryCustom;
 import com.project.gym.repository.TicketRepository;
+//import kafka.Kafka;
 import com.project.gym.repository.TicketRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+//import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,29 +34,35 @@ public class GymService {
 
     private final AttendanceRepository attendanceRepository;
 
+    private final AttendanceRepositoryCustom attendanceRepositoryCustom;
+
     private final TrainerServiceClient trainerServiceClient;
 
     private final UserServiceClient userServiceClient;
 
-    private final KafkaTemplate<String, UserTypeUpdatedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, UserTypeUpdatedEvent> kafkaUserTypeTemplate;
+
 
 
     public Ticket saveTicket(OrderRequest orderRequest, String userId){
-        LessonResponse lessonResponse = trainerServiceClient.getLesson(orderRequest.getLessonId());
-        Ticket saveTicket;
-        if(lessonResponse.getLessonType().equals("GENERAL")){
-            TicketDto generalDto = TicketDto.generalTicket(orderRequest, lessonResponse);
-            saveTicket = Ticket.generalTicket(generalDto);
-        }else{
-            TicketDto personalDto = TicketDto.personalTicket(orderRequest, lessonResponse);
-            saveTicket = Ticket.personalTicket(personalDto);
-        }
+       
+		LessonResponse lessonResponse = trainerServiceClient.getLesson(orderRequest.getLessonId());
+		Ticket saveTicket;
+		if(lessonResponse.getLessonType().equals(LessonType.GENERAL)){
+			TicketDto generalDto = TicketDto.generalTicket(orderRequest, lessonResponse);
+			saveTicket = Ticket.generalTicket(generalDto);
+		}else{
+			TicketDto personalDto = TicketDto.personalTicket(orderRequest, lessonResponse);
+			saveTicket = Ticket.personalTicket(personalDto);
+		}
 
-        UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
+		UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
 
-        log.info("userType-updated 이벤트 발신 : {} ", event);
-        kafkaTemplate.send("userType-updated-topic", event);
-        return ticketRepository.save(saveTicket);
+		log.info("userType-updated 이벤트 발신 : {} ", event);
+		kafkaUserTypeTemplate.send("userType-updated-topic", event);
+		return ticketRepository.save(saveTicket);
+       
+
     }
 
     public List<TicketDto> getTickets(String userId){
@@ -72,7 +80,19 @@ public class GymService {
     }
 
     public Attendance saveAttendance(String userId){
+        UserResponse user = userServiceClient.getUser(userId);
+        AttendanceDto attendanceDto;
+        if(user.getUserType().equals("GENERAL")){
+            attendanceDto = attendanceRepositoryCustom.findGeneralAttendance(userId)
+                    .orElseThrow(() -> new RuntimeException("General ticket not found"));
+        }else{
+            attendanceDto = attendanceRepositoryCustom.findPersonalAttendance(userId)
+                    .orElseThrow(() -> new RuntimeException("Personal ticket not found"));
+        }
 
+        if(attendanceDto.getAttendanceId() != null){
+            throw new RuntimeException("attendance already exists");
+        }
 
         Attendance attendance = Attendance.builder()
                 .userId(userId)

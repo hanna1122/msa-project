@@ -1,6 +1,7 @@
 package com.project.gym.dto;
 
 import com.project.gym.domain.Ticket;
+import com.project.gym.domain.UserType;
 import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
 import lombok.*;
@@ -26,6 +27,8 @@ public class TicketDto {
 
     private String useYn;
 
+    private UserType type;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -38,6 +41,7 @@ public class TicketDto {
                 .lessonId(lessonResponse.getId())
                 .startDate(lessonResponse.getStartDate())
                 .endDate(lessonResponse.getEndDate())
+                .type(UserType.GENERAL)
                 .build();
     }
 
@@ -47,6 +51,7 @@ public class TicketDto {
                 .orderId(orderRequest.getId())
                 .lessonId(lessonResponse.getId())
                 .count(lessonResponse.getCount())
+                .type(UserType.PERSONAL)
                 .build();
     }
 

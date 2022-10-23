@@ -73,6 +73,7 @@ public class GymController {
 
 
     @Transactional
+    @PostMapping("/gym-service/count")
     public ResponseEntity updateCount(@RequestBody TicketRequest ticketRequest,
                                              @RequestHeader(value = "user-id") String userId){
         gymService.updateCount(ticketRequest.getId(), ticketRequest.getReservationStatus(), userId);

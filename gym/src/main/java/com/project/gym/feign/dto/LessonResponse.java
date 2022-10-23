@@ -1,12 +1,15 @@
 package com.project.gym.feign.dto;
 
+import com.project.gym.domain.LessonType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Builder
 @Getter
+@ToString
 public class LessonResponse {
     private Long id;
 
@@ -18,7 +21,7 @@ public class LessonResponse {
 
     private Long count;
 
-    private String lessonType;
+    private LessonType lessonType;
 
     private LocalDate startDate;
 
