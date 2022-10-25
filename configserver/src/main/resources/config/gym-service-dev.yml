@@ -2,6 +2,7 @@ jwt:
   secretKey: jwtpassword
 
 
+
 spring:
   kafka:
     producer:
