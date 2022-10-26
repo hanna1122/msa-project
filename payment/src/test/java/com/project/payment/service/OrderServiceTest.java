@@ -23,7 +23,7 @@ public class OrderServiceTest {
     @Test
     public void saveOrderTest(){
 
-        String userId = "test12";
+        String userId = "user12";
         Long lessonId = 1L;
         String lessonName = "testLesson";
         Long lessonPrice = 10000L;

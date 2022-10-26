@@ -20,8 +20,8 @@ public class OrderControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void saveOrderTest() throws Exception{
-        String trainerId = "hong12";
+    public void saveOrderControllerTest() throws Exception{
+        String trainerId = "user12";
         String lessonName = "lessontest12";
         Long lessonId = 1L;
         String paymentType = "무통장입금";
@@ -43,4 +43,15 @@ public class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void getOrderControllerTest() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/payment-service/order")
+                        .header("user-id", "user12")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 }

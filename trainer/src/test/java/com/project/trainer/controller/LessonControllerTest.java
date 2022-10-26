@@ -40,11 +40,21 @@ public class LessonControllerTest {
         String json = new Gson().toJson(dto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trainer-service/lesson")
-                        .header("user-id", "user12")
+                        .header("user-id", "trainer12")
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getLessonTest() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/trainer-service/lesson/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
     }
 
     @Test
@@ -70,4 +80,6 @@ public class LessonControllerTest {
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
 }

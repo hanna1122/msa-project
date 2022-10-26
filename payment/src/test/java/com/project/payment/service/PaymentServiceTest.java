@@ -2,10 +2,9 @@ package com.project.payment.service;
 
 import com.project.payment.domain.Order;
 import com.project.payment.domain.OrderStatus;
-import com.project.payment.feign.dto.LessonResponse;
+import com.project.payment.domain.Payment;
 import com.project.payment.dto.OrderDto;
-import com.project.payment.feign.client.TrainerServiceClient;
-import com.project.payment.repository.OrderRepository;
+import com.project.payment.repository.PaymentRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -13,26 +12,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
 public class PaymentServiceTest {
 
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
 
 
     @Test
-    public void saveOrderTest(){
+    public void savePaymentTest(){
 
-        String userId = "test12";
-        Long lessonId = Long.valueOf(1);
+        String userId = "user12";
+        Long id = 1L;
+        Long lessonId = 1L;
         String lessonName = "testLesson";
         Long lessonPrice = 10000L;
         String paymentType = "무통장입금";
 
+        Order updateOrder = orderService.updateOrder(id, OrderStatus.FINISHED);
         OrderDto dto = OrderDto.builder()
+                .id(id)
                 .userId(userId)
                 .lessonId(lessonId)
                 .lessonName(lessonName)
@@ -40,37 +45,23 @@ public class PaymentServiceTest {
                 .paymentType(paymentType)
                 .build();
 
-        Order order = orderRepository.save(new Order(dto));
-        assertEquals(order.getUserId(), userId);
-        assertEquals(order.getLessonId(), lessonId);
-        assertEquals(order.getLessonPrice(), lessonPrice);
-        assertEquals(order.getPaymentType(), paymentType);
-        assertEquals(order.getOrderStatus().toString(), "PLACED");
-    }
-
-    @Test
-    public void getOrderTest(){
-        String userId = "test12";
-        Long lessonId = Long.valueOf(1);
-        String lessonName = "testLesson";
-        Long lessonPrice = 10000L;
-        String paymentType = "무통장입금";
-
-        Order order = orderRepository.findByUserId("test12").orElseThrow(() -> new RuntimeException("User not found"));
-        assertEquals(order.getUserId(), userId);
-        assertEquals(order.getLessonId(), lessonId);
-        assertEquals(order.getLessonPrice(), lessonPrice);
-        assertEquals(order.getPaymentType(), paymentType);
-        assertEquals(order.getOrderStatus().toString(), "PLACED");
-    }
-
-    @Test
-    public void updateOrderTest(){
-        Order order = orderRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("주문번호가 존재하지 않습니다."));
-
-        order.setOrderStatus(OrderStatus.FINISHED);
-        Order updateOrder = orderRepository.save(order);
+        Payment payment = paymentRepository.save(new Payment(dto));
+        assertEquals(payment.getUserId(), userId);
+        assertEquals(payment.getLessonId(), lessonId);
+        assertEquals(payment.getLessonPrice(), lessonPrice);
+        assertEquals(payment.getPaymentType(), paymentType);
         assertEquals(updateOrder.getOrderStatus().toString(), "FINISHED");
     }
+
+    @Test
+    public void cancelPaymentTest(){
+        Long orderId = 1L;
+        Long paymentId = 1L;
+
+        Order updateOrder = orderService.updateOrder(orderId, OrderStatus.CANCEL);
+        paymentRepository.deleteById(paymentId);
+
+        assertEquals(updateOrder.getOrderStatus().toString(), "CANCEL");
+    }
+
 }

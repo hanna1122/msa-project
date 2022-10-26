@@ -27,7 +27,7 @@ public class LessonServiceTest {
     private RecordRepository recordRepository;
 
     @Test
-    public void lessonSaveTest(){
+    public void saveLessonTest(){
         String trainerId = "trainer12";
         String lessonName = "testLesson";
         Long price = 10000L;
@@ -52,7 +52,7 @@ public class LessonServiceTest {
     }
 
     @Test
-    public void lessonGetTest(){
+    public void getLessonTest(){
         Long lessonId = 4L;
         String trainerId = "trainer12";
         String lessonName = "testLesson";
