@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,9 +19,10 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 @Table(name = "TICKET")
 @EntityListeners(AuditingEntityListener.class)
-public class Ticket {
+public class Ticket extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,14 +42,6 @@ public class Ticket {
     @Embedded
     private GeneralUser generalUser;
 
-    @Column(nullable = false, updatable = false)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime regDate;
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @LastModifiedDate
-    private LocalDateTime modDate;
 
     public static Ticket generalTicket(TicketDto ticketDto){
         return Ticket.builder()
@@ -69,4 +63,9 @@ public class Ticket {
                 .build();
     }
 
+
+    public void changeCount(Long count) {
+
+        this.personalUser = new PersonalUser(count);
+    }
 }

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "LESSONS")
 @EntityListeners(AuditingEntityListener.class)
-public class Lessons {
+public class Lessons extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,11 +43,6 @@ public class Lessons {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate endDate;
 
-
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime regDate;
 
     public Lessons(LessonDto lessonDto){
         this.trainerId = lessonDto.getTrainerId();

@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @DynamicUpdate
 @Table(name = "RESERVATIONS")
 @EntityListeners(AuditingEntityListener.class)
-public class Reservation {
+public class Reservation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +47,6 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
 
-    @Column(nullable = false, updatable = false)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime regDate;
 
     public Reservation(ReservationDto reservationDto, UserResponse userResponse){
         this.ticketId = reservationDto.getTicketId();

@@ -1,4 +1,4 @@
-package com.project.trainer.domain;
+package com.project.reservation.domain;
 
 import lombok.Getter;
 import lombok.Setter;

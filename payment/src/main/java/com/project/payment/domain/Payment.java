@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "PAYMENT")
 @EntityListeners(AuditingEntityListener.class)
-public class Payment {
+public class Payment extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,14 +35,6 @@ public class Payment {
 
     private String paymentType;
 
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime regDate;
-
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @LastModifiedDate
-    private LocalDateTime modDate;
 
     public Payment(OrderDto orderDto){
         this.orderId = orderDto.getId();

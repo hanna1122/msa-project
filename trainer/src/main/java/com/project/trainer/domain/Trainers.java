@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "TRAINERS")
 @EntityListeners(AuditingEntityListener.class)
-public class Trainers {
+public class Trainers extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,17 +31,12 @@ public class Trainers {
     @Column(length = 10, nullable = false)
     private String name;
 
-    @Embedded
-    private Performance performance;
-
-    @Column(nullable = false, updatable = false)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
-    @CreatedDate
-    private LocalDateTime regDate;
 
     public Trainers(TrainerDto trainerDto){
         this.userId = trainerDto.getUserId();
         this.password = trainerDto.getPassword();
         this.name = trainerDto.getName();
     }
+
+
 }

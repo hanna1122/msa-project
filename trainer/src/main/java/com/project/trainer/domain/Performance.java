@@ -16,12 +16,16 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "PERFORMANCE")
 @EntityListeners(AuditingEntityListener.class)
-public class Performance {
+public class Performance extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
     private Long trainerId;
+
     private Long amount;
+
     private Long lessonCount;
 
     public Performance(PerformanceDto performanceDto){
