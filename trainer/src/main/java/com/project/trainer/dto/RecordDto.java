@@ -9,6 +9,8 @@ public class RecordDto {
 
     private String userId;
 
+    private Long trainerId;
+
     private Long lessonId;
 
     private String content;

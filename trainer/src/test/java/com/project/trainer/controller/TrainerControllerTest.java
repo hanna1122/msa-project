@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -63,6 +62,24 @@ public class TrainerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/trainer-service/performance")
                         .header("user-id", "trainer12")
                         .content(json)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getPerformancesTest() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/trainer-service/performances/1")
+                        .header("user-id", "trainer12")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void deleteTrainerTest() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.delete("/trainer-service/trainer/1")
+                        .header("user-id", "trainer12")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());

@@ -88,7 +88,7 @@ public class LessonController {
             }
     )
     @GetMapping("/trainer-service/lesson")
-    public ResponseEntity getLessons(){
+    public ResponseEntity getLessons(@RequestHeader(value = "user-id") String userId){
         List<LessonDto> lessons = lessonService.findLessons();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(lessons);

@@ -23,6 +23,8 @@ public class Record extends BaseEntity{
 
     private String userId;
 
+    private String trainerId;
+
     private Long lessonId;
 
     private String content;
@@ -31,6 +33,7 @@ public class Record extends BaseEntity{
 
     public Record(RecordDto recordDto, String trainerId){
         this.userId = recordDto.getUserId();
+        this.trainerId = trainerId;
         this.lessonId = recordDto.getLessonId();
         this.content = recordDto.getContent();
         this.time = recordDto.getTime();

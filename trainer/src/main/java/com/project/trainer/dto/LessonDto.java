@@ -32,6 +32,7 @@ public class LessonDto {
 
     public static LessonDto create(Lessons lessons){
         return LessonDto.builder()
+                .id(lessons.getId())
                 .trainerId(lessons.getTrainerId())
                 .lessonName(lessons.getLessonName())
                 .price(lessons.getPrice())
