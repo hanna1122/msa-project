@@ -9,6 +9,7 @@ import com.project.payment.feign.dto.LessonResponse;
 import com.project.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @Service
@@ -36,7 +37,9 @@ public class PaymentService {
         return payment;
     }
 
+    @Transactional
     public Order cancelPayment(OrderDto orderDto, String userId){
+        paymentRepository.deleteById(orderDto.getPaymentId());
         return orderService.updateOrder(orderDto.getId(), OrderStatus.CANCEL);
     }
 }
