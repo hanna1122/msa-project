@@ -21,6 +21,7 @@ public class PaymentService {
 
     public final GymServiceClient gymServiceClient;
 
+    @Transactional
     public Payment savePayment(OrderDto orderDto, String userId){
         Order updateOrder = orderService.updateOrder(orderDto.getId(), OrderStatus.FINISHED);
         OrderDto dto = OrderDto.builder()

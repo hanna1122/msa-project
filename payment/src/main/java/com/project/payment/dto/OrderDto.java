@@ -11,6 +11,9 @@ import lombok.*;
 public class OrderDto {
     private Long id;
 
+    @Setter
+    private Long paymentId;
+
     private String userId;
 
     private Long lessonId;
@@ -24,6 +27,7 @@ public class OrderDto {
 
     public static OrderDto of(Order order) {
         OrderDto orderDto = new OrderDto();
+        orderDto.id = order.getId();
         orderDto.userId = order.getUserId();
         orderDto.lessonId = order.getLessonId();
         orderDto.lessonName = order.getLessonName();
@@ -31,5 +35,19 @@ public class OrderDto {
         orderDto.paymentType = order.getPaymentType();
 
         return orderDto;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean isSame = false;
+        if(obj != null && obj instanceof OrderDto) {
+            if(this.userId == ((OrderDto) obj).getUserId()
+                    && this.lessonId == ((OrderDto) obj).getLessonId()
+                    && this.lessonPrice == ((OrderDto) obj).getLessonPrice()
+                    && this.lessonName == ((OrderDto) obj).getLessonName()){
+                isSame = true;
+            }
+        }
+        return isSame;
     }
 }

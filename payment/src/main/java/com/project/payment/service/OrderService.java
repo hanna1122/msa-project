@@ -9,6 +9,9 @@ import com.project.payment.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +34,18 @@ public class OrderService {
         return orderRepository.save(new Order(dto));
     }
 
-    public Order getOrder(String userId){
+    public Order getOrder(Long orderId){
+
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public List<OrderDto> getOrders(String userId){
 
         return orderRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .stream()
+                .map(OrderDto::of)
+                .collect(Collectors.toList());
     }
 
     public Order updateOrder(Long orderId, OrderStatus orderStatus) {

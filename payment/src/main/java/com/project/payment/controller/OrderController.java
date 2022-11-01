@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Tag(name="주문관리", description="주문관리 api")
 @RestController
@@ -38,16 +40,30 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-    @Operation(summary = "주문조회",
+    @Operation(summary = "주문 상세조회",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Order.class))),
                     @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
             }
     )
-    @GetMapping("/payment-service/order")
-    public ResponseEntity<Order> getOrder(@RequestHeader(value = "user-id") String userId){
-        Order order = orderService.getOrder(userId);
+    @GetMapping("/payment-service/order/{orderId}")
+    public ResponseEntity<Order> getOrder(@PathVariable Long orderId,
+                                          @RequestHeader(value = "user-id") String userId){
+        Order order = orderService.getOrder(orderId);
+        return ResponseEntity.ok(order);
+    }
+
+    @Operation(summary = "주문 리스트조회",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Order.class))),
+                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
+            }
+    )
+    @GetMapping("/payment-service/orders")
+    public ResponseEntity<List> getOrders(@RequestHeader(value = "user-id") String userId){
+        List<OrderDto> order = orderService.getOrders(userId);
         return ResponseEntity.ok(order);
     }
 
@@ -59,15 +75,10 @@ public class OrderController {
             }
     )
     @PatchMapping("/payment-service/order/{orderId}")
-    public ResponseEntity<Order> updateOrder(@PathVariable("orderId") Long orderId, @RequestBody OrderStatusRequest orderStatusRequest){
-        OrderStatus orderStatus = orderStatusRequest.getOrderStatus();
-        Order orderUpdate = orderService.updateOrder(orderId, orderStatus);
+    public ResponseEntity<Order> cancelOrder(@PathVariable("orderId") Long orderId){
+        Order orderUpdate = orderService.updateOrder(orderId, OrderStatus.CANCEL);
         return ResponseEntity.ok(orderUpdate);
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
-    class OrderStatusRequest{
-        private OrderStatus orderStatus;
-    }
 
 }
