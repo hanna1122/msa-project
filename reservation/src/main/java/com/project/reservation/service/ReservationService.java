@@ -66,6 +66,7 @@ public class ReservationService {
         TicketRequest ticketRequest = TicketRequest.builder()
                 .id(updatedReservation.getTicketId())
                 .reservationStatus("FINISHED")
+                .reservationId(updatedReservation.getId())
                 .build();
         gymServiceClient.updateCount(ticketRequest, userId);
 
@@ -80,6 +81,7 @@ public class ReservationService {
 
         TicketRequest ticketRequest = TicketRequest.builder()
                 .id(updatedReservation.getTicketId())
+                .reservationId(updatedReservation.getId())
                 .reservationStatus("CANCEL")
                 .build();
         gymServiceClient.updateCount(ticketRequest, userId);

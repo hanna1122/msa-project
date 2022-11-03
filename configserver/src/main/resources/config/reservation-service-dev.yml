@@ -1,0 +1,20 @@
+jwt:
+  secretKey: jwtpassword
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: myGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+          deserializer:
+            value:
+              delegate:
+                class: com.project.reservation.message.consumer.CustomDeserializer

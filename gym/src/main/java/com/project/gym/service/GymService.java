@@ -9,6 +9,7 @@ import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
 import com.project.gym.feign.dto.UserResponse;
 import com.project.gym.message.event.PaymentRollbackEvent;
+import com.project.gym.message.event.ReservationRollbackEvent;
 import com.project.gym.message.event.UserTypeUpdatedEvent;
 import com.project.gym.repository.AttendanceRepository;
 import com.project.gym.repository.AttendanceRepositoryCustom;
@@ -42,26 +43,36 @@ public class GymService {
 
     private final KafkaTemplate<String, UserTypeUpdatedEvent> kafkaUserTypeTemplate;
 
+    private final KafkaTemplate<String, PaymentRollbackEvent> kafkaRollbackTemplate;
+
+    private final KafkaTemplate<String, ReservationRollbackEvent> kafkaReservationTemplate;
 
 
     public Ticket saveTicket(OrderRequest orderRequest, String userId){
-       
-		LessonResponse lessonResponse = trainerServiceClient.getLesson(orderRequest.getLessonId());
-		Ticket saveTicket;
-		if(lessonResponse.getLessonType().equals(LessonType.GENERAL)){
-			TicketDto generalDto = TicketDto.generalTicket(orderRequest, lessonResponse);
-			saveTicket = Ticket.generalTicket(generalDto);
-		}else{
-			TicketDto personalDto = TicketDto.personalTicket(orderRequest, lessonResponse);
-			saveTicket = Ticket.personalTicket(personalDto);
-		}
+        try{
+            LessonResponse lessonResponse = trainerServiceClient.getLesson(orderRequest.getLessonId());
+            Ticket saveTicket;
+            if(lessonResponse.getLessonType().equals(LessonType.GENERAL)){
+                TicketDto generalDto = TicketDto.generalTicket(orderRequest, lessonResponse);
+                saveTicket = Ticket.generalTicket(generalDto);
+            }else{
+                TicketDto personalDto = TicketDto.personalTicket(orderRequest, lessonResponse);
+                saveTicket = Ticket.personalTicket(personalDto);
+            }
 
-		UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
+            UserTypeUpdatedEvent event = new UserTypeUpdatedEvent(userId, saveTicket.getType());
 
-		log.info("userType-updated 이벤트 발신 : {} ", event);
-		kafkaUserTypeTemplate.send("userType-updated-topic", event);
-		return ticketRepository.save(saveTicket);
-       
+            log.info("userType-updated 이벤트 발신 : {} ", event);
+            kafkaUserTypeTemplate.send("userType-updated-topic", event);
+
+            return ticketRepository.save(saveTicket);
+        } catch (Exception e) {
+            PaymentRollbackEvent event = new PaymentRollbackEvent(orderRequest.getPaymentId(), orderRequest.getId());
+
+            log.info("payment-rollback 이벤트 발신 : {} ", event);
+            kafkaRollbackTemplate.send("payment-rollback-topic", event);
+            return null;
+        }
 
     }
 
@@ -74,7 +85,7 @@ public class GymService {
 
     public TicketDto getTicket(Long ticketId){
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(()-> new RuntimeException("ticketId에 해당하는 이용권 없음"));
+                .orElseThrow(()-> new RuntimeException("ticket not found"));
 
         return TicketDto.of(ticket);
     }
@@ -100,14 +111,21 @@ public class GymService {
         return attendanceRepository.save(attendance);
     }
 
-    public void updateCount(Long ticketId, String reservationStatus, String userId){
-        Ticket findTicket = ticketRepositoryCustom.findTicket(ticketId);
-        Long count = findTicket.getPersonalUser().getCount();
-        if (reservationStatus.equals("CANCEL")) {
-            count+=1;
-        }else{
-            count-=1;
+    public void updateCount(Long ticketId, Long reservationId, String reservationStatus, String userId){
+        try {
+            Ticket findTicket = ticketRepositoryCustom.findTicket(ticketId);
+            Long count = findTicket.getPersonalUser().getCount();
+            if (reservationStatus.equals("CANCEL")) {
+                count+=1;
+            }else{
+                count-=1;
+            }
+            ticketRepositoryCustom.updateCount(ticketId, count);
+
+        } catch(Exception e) {
+            ReservationRollbackEvent event = new ReservationRollbackEvent(reservationId);
+            log.info("reservation-rollback 이벤트 발신 : {} ", event);
+            kafkaReservationTemplate.send("reservation-rollback-topic", event);
         }
-        ticketRepositoryCustom.updateCount(ticketId, count);
     }
 }

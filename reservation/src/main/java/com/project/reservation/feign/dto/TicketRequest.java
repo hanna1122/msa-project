@@ -9,5 +9,6 @@ import lombok.*;
 @Builder
 public class TicketRequest {
     private Long id;
+    private Long reservationId;
     private String reservationStatus;
 }
