@@ -3,12 +3,14 @@ package com.project.payment.service;
 import com.project.payment.domain.Order;
 import com.project.payment.domain.OrderStatus;
 import com.project.payment.dto.OrderDto;
+import com.project.payment.exception.CustomException;
 import com.project.payment.repository.OrderRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +60,7 @@ public class OrderServiceTest {
         Long lessonPrice = 10000L;
         String paymentType = "무통장입금";
 
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("User not found"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomException(HttpStatus.CONFLICT,"User not found"));
         assertEquals(order.getUserId(), userId);
         assertEquals(order.getLessonId(), lessonId);
         assertEquals(order.getLessonPrice(), lessonPrice);
@@ -87,7 +89,7 @@ public class OrderServiceTest {
     @Test
     public void updateOrderTest(){
         Order order = orderRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("주문번호가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.CONFLICT, "Order not found."));
 
         order.setOrderStatus(OrderStatus.FINISHED);
         Order updateOrder = orderRepository.save(order);

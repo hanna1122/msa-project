@@ -3,6 +3,7 @@ package com.project.reservation.service;
 import com.project.reservation.domain.Reservation;
 import com.project.reservation.domain.ReservationStatus;
 import com.project.reservation.dto.ReservationDto;
+import com.project.reservation.exception.CustomException;
 import com.project.reservation.feign.client.GymServiceClient;
 import com.project.reservation.feign.dto.TicketResponse;
 import com.project.reservation.feign.dto.UserResponse;
@@ -10,6 +11,7 @@ import com.project.reservation.repository.ReservationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -69,7 +71,7 @@ public class ReservationServiceTest {
         LocalDate date = LocalDate.now();
 
         Reservation result =  reservationRepository.findById(reservationId)
-                .orElseThrow(()-> new RuntimeException("예약번호가 존재하지 않습니다."));
+                .orElseThrow(()-> new CustomException(HttpStatus.CONFLICT, "예약번호가 존재하지 않습니다."));
 
         assertEquals(result.getReservatorId(), userId);
         assertEquals(result.getTicketId(), ticketId);
@@ -84,7 +86,7 @@ public class ReservationServiceTest {
     public void updateStatusTest(){
         Long reservationId = 1L;
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(()-> new RuntimeException("예약번호가 존재하지 않습니다."));
+                .orElseThrow(()-> new CustomException(HttpStatus.CONFLICT, "예약번호가 존재하지 않습니다."));
 
         reservation.setReservationStatus(ReservationStatus.FINISHED);
 

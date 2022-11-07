@@ -2,15 +2,20 @@ package com.project.trainer.service;
 
 import com.project.trainer.domain.Lessons;
 import com.project.trainer.domain.Record;
+import com.project.trainer.domain.Trainers;
 import com.project.trainer.dto.LessonDto;
 import com.project.trainer.dto.RecordDto;
+import com.project.trainer.exception.CustomException;
 import com.project.trainer.repository.LessonRepository;
 import com.project.trainer.repository.RecordRepository;
+import com.project.trainer.repository.TrainerRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
 
@@ -26,6 +31,9 @@ public class LessonServiceTest {
     @Autowired
     private RecordRepository recordRepository;
 
+    @Autowired
+    private TrainerRepository trainerRepository;
+
     @Test
     public void saveLessonTest(){
         String trainerId = "trainer12";
@@ -35,15 +43,16 @@ public class LessonServiceTest {
         LocalDate endDate = LocalDate.parse("2022-10-02");
 
         LessonDto dto = LessonDto.builder()
-                .trainerId(trainerId)
                 .lessonName(lessonName)
                 .price(price)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
 
+        Trainers trainer = trainerRepository.findByUserId(trainerId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Lessons lesson = lessonRepository.save(new Lessons(dto));
+        Lessons lesson = lessonRepository.save(new Lessons(dto, trainer));
         assertEquals(lesson.getTrainerId(), trainerId);
         assertEquals(lesson.getLessonName(), lessonName);
         assertEquals(lesson.getPrice(), price);
@@ -60,7 +69,7 @@ public class LessonServiceTest {
         LocalDate startDate = LocalDate.parse("2022-09-29");
         LocalDate endDate = LocalDate.parse("2022-10-02");
 
-        Lessons lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new RuntimeException("Lesson not found"));
+        Lessons lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new CustomException(HttpStatus.CONFLICT, "Lesson not found"));
         assertEquals(lesson.getTrainerId(), trainerId);
         assertEquals(lesson.getLessonName(), lessonName);
         assertEquals(lesson.getPrice(), price);

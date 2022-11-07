@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class LessonResponse {
     private Long id;
 
-    private String trainerId;
+    private Long trainerId;
 
     private String lessonName;
 
