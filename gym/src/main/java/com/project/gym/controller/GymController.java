@@ -2,6 +2,7 @@ package com.project.gym.controller;
 
 import com.project.gym.domain.Attendance;
 import com.project.gym.domain.Ticket;
+import com.project.gym.dto.Result;
 import com.project.gym.dto.TicketDto;
 import com.project.gym.feign.dto.OrderRequest;
 import com.project.gym.service.GymService;
@@ -24,19 +25,6 @@ import java.util.List;
 public class GymController {
     private final GymService gymService;
 
-    @Operation(summary = "이용권등록",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = Ticket.class))),
-                    @ApiResponse(responseCode = "400", description = "Bad Parameter", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(hidden = true)))
-            }
-    )
-    @PostMapping("/gym-service/ticket")
-    public ResponseEntity<Ticket> saveTicket(@RequestBody OrderRequest orderRequest,
-                                           @RequestHeader(value = "user-id") String userId){
-        Ticket ticket = gymService.saveTicket(orderRequest, userId);
-        return ResponseEntity.ok(ticket);
-    }
 
     @Operation(summary = "이용권 리스트조회",
             responses = {
@@ -46,16 +34,16 @@ public class GymController {
             }
     )
     @GetMapping("/gym-service/tickets")
-    public ResponseEntity<List> getTickets(@RequestHeader(value = "user-id") String userId){
+    public ResponseEntity<Result> getTickets(@RequestHeader(value = "user-id") String userId){
         List<TicketDto> tickets = gymService.getTickets(userId);
-        return ResponseEntity.ok(tickets);
+        return ResponseEntity.ok(Result.createSuccessResult(tickets));
     }
 
     @GetMapping("/gym-service/ticket/{ticketId}")
-    public ResponseEntity<TicketDto> getTicket(@PathVariable("ticketId") Long ticketId,
+    public ResponseEntity<Result> getTicket(@PathVariable("ticketId") Long ticketId,
                                            @RequestHeader(value = "user-id") String userId){
         TicketDto ticket = gymService.getTicket(ticketId);
-        return ResponseEntity.ok(ticket);
+        return ResponseEntity.ok(Result.createSuccessResult(ticket));
     }
 
     @Operation(summary = "출석체크",
@@ -76,13 +64,14 @@ public class GymController {
     @PostMapping("/gym-service/count")
     public ResponseEntity updateCount(@RequestBody TicketRequest ticketRequest,
                                              @RequestHeader(value = "user-id") String userId){
-        gymService.updateCount(ticketRequest.getId(), ticketRequest.getReservationStatus(), userId);
+        gymService.updateCount(ticketRequest.getId(), ticketRequest.getReservationId(), ticketRequest.getReservationStatus(), userId);
         return ResponseEntity.ok("success");
     }
 
     @Getter
     public static class TicketRequest {
         private Long id;
+        private Long reservationId;
         private String reservationStatus;
     }
 

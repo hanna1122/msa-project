@@ -2,12 +2,27 @@ jwt:
   secretKey: jwtpassword
 
 
-
 spring:
   kafka:
     producer:
       bootstrap-servers: kafka:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.project.gym.message.producer.CustomSerializer
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: myGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+          deserializer:
+            value:
+              delegate:
+                class: com.project.gym.message.consumer.CustomDeserializer
+
 
 

@@ -4,6 +4,7 @@ import com.project.gym.domain.Ticket;
 import com.project.gym.domain.UserType;
 import com.project.gym.feign.dto.LessonResponse;
 import com.project.gym.feign.dto.OrderRequest;
+import com.project.gym.message.event.TicketSaveEvent;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class TicketDto {
     private LocalDate endDate;
 
 
-    public static TicketDto generalTicket(OrderRequest orderRequest, LessonResponse lessonResponse){
+    public static TicketDto generalTicket(TicketSaveEvent orderRequest, LessonResponse lessonResponse){
         return TicketDto.builder()
                 .userId(orderRequest.getUserId())
                 .orderId(orderRequest.getId())
@@ -45,7 +46,7 @@ public class TicketDto {
                 .build();
     }
 
-    public static TicketDto personalTicket(OrderRequest orderRequest, LessonResponse lessonResponse){
+    public static TicketDto personalTicket(TicketSaveEvent orderRequest, LessonResponse lessonResponse){
         return TicketDto.builder()
                 .userId(orderRequest.getUserId())
                 .orderId(orderRequest.getId())
