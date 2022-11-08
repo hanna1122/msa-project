@@ -5,10 +5,12 @@ import com.project.trainer.domain.Trainers;
 import com.project.trainer.dto.LessonDto;
 import com.project.trainer.dto.PerformanceDto;
 import com.project.trainer.dto.TrainerDto;
+import com.project.trainer.exception.CustomException;
 import com.project.trainer.repository.PerformanceRepository;
 import com.project.trainer.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -60,13 +62,9 @@ public class TrainerService implements UserDetailsService {
     }
     public Trainers getTrainer(Long trainerId) {
         return trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new RuntimeException("trainer not found."));
+                .orElseThrow(() -> new CustomException(HttpStatus.CONFLICT, "trainer not found."));
     }
 
-    public Performance addPerformance(PerformanceDto performanceDto){
-        Trainers trainer = getTrainer(performanceDto.getTrainerId());
-        return performanceRepository.save(new Performance(performanceDto, trainer));
-    }
 
     public List<PerformanceDto> getPerformances(Long trainerId) {
         return performanceRepository.findAll()

@@ -4,6 +4,7 @@ import com.project.trainer.domain.Performance;
 import com.project.trainer.domain.Trainers;
 import com.project.trainer.dto.PerformanceDto;
 import com.project.trainer.dto.TrainerDto;
+import com.project.trainer.message.event.PerformanceSaveEvent;
 import com.project.trainer.repository.PerformanceRepository;
 import com.project.trainer.repository.TrainerRepository;
 import org.junit.jupiter.api.MethodOrderer;
@@ -82,7 +83,7 @@ public class TrainerServiceTest {
         Trainers trainer = trainerRepository.findById(trainerId)
                 .orElseThrow(() -> new UsernameNotFoundException("trainer not found"));
 
-        PerformanceDto dto = PerformanceDto.builder()
+        PerformanceSaveEvent dto = PerformanceSaveEvent.builder()
                 .trainerId(trainerId)
                 .amount(amount)
                 .lessonCount(lessonCount)
@@ -105,7 +106,7 @@ public class TrainerServiceTest {
                 .collect(Collectors.toList());
 
 
-        PerformanceDto performanceDto = PerformanceDto.builder()
+        PerformanceSaveEvent performanceDto = PerformanceSaveEvent.builder()
                 .trainerId(1L)
                 .amount(10000L)
                 .lessonCount(5L)
