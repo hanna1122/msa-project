@@ -16,6 +16,8 @@ public class OrderDto {
 
     private String userId;
 
+    private Long trainerId;
+
     private Long lessonId;
 
     private String paymentType;
@@ -29,6 +31,7 @@ public class OrderDto {
         OrderDto orderDto = new OrderDto();
         orderDto.id = order.getId();
         orderDto.userId = order.getUserId();
+        orderDto.trainerId = orderDto.getTrainerId();
         orderDto.lessonId = order.getLessonId();
         orderDto.lessonName = order.getLessonName();
         orderDto.lessonPrice = order.getLessonPrice();

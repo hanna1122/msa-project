@@ -75,5 +75,10 @@ public class PaymentService {
         return orderService.updateOrder(orderDto.getId(), OrderStatus.CANCEL);
     }
 
-   
+    public List<OrderDto> getPayments() {
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderDto::of)
+                .collect(Collectors.toList());
+    }
 }
