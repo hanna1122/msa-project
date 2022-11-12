@@ -25,7 +25,6 @@ import java.util.List;
 public class GymController {
     private final GymService gymService;
 
-
     @Operation(summary = "이용권 리스트조회",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Success", content = @Content(schema = @Schema(implementation = TicketDto.class))),
@@ -57,22 +56,6 @@ public class GymController {
     public ResponseEntity<Attendance> saveAttendance(@RequestHeader(value = "user-id") String userId){
         Attendance attendance = gymService.saveAttendance(userId);
         return ResponseEntity.ok(attendance);
-    }
-
-
-    @Transactional
-    @PostMapping("/gym-service/count")
-    public ResponseEntity updateCount(@RequestBody TicketRequest ticketRequest,
-                                             @RequestHeader(value = "user-id") String userId){
-        gymService.updateCount(ticketRequest.getId(), ticketRequest.getReservationId(), ticketRequest.getReservationStatus(), userId);
-        return ResponseEntity.ok("success");
-    }
-
-    @Getter
-    public static class TicketRequest {
-        private Long id;
-        private Long reservationId;
-        private String reservationStatus;
     }
 
 }

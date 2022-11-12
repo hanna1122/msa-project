@@ -1,6 +1,7 @@
 package com.project.gym.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.gym.message.event.CountUpdatedEvent;
 import com.project.gym.message.event.TicketSaveEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -35,6 +36,13 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, TicketSaveEvent> ticketSaveListener() {
         ConcurrentKafkaListenerContainerFactory<String, TicketSaveEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, CountUpdatedEvent> countUpdatedListener() {
+        ConcurrentKafkaListenerContainerFactory<String, CountUpdatedEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

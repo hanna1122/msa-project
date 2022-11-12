@@ -121,7 +121,7 @@ public class GymService {
         return attendanceRepository.save(attendance);
     }
 
-    public void updateCount(Long ticketId, Long reservationId, String reservationStatus, String userId){
+    public void updateCount(Long ticketId, Long reservationId, String reservationStatus){
         try {
             Ticket findTicket = ticketRepositoryCustom.findTicket(ticketId);
             Long count = findTicket.getPersonalUser().getCount();
@@ -133,6 +133,7 @@ public class GymService {
             ticketRepositoryCustom.updateCount(ticketId, count);
 
         } catch(Exception e) {
+            e.printStackTrace();
             ReservationRollbackEvent event = new ReservationRollbackEvent(reservationId);
             log.info("reservation-rollback 이벤트 발신 : {} ", event);
             kafkaReservationTemplate.send("reservation-rollback-topic", event);

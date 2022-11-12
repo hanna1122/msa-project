@@ -2,11 +2,10 @@ package com.project.gym.repository;
 
 import com.project.gym.domain.Ticket;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.impl.JPAUpdateClause;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.project.gym.domain.QAttendance.attendance;
 import static com.project.gym.domain.QTicket.ticket;
 
 @Repository
@@ -30,6 +29,7 @@ public class TicketRepositoryCustom {
         return ticketInfo;
     }
 
+    @Transactional
     public void updateCount(Long ticketId, Long count){
         long execute = queryFactory
                 .update(ticket)
