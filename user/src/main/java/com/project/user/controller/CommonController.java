@@ -1,5 +1,6 @@
 package com.project.user.controller;
 
+import com.project.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CommonController {
     private final Environment env;
+
+    private final UserService userService;
 
     @Operation(summary = "테스트",
             responses = {
@@ -32,4 +34,15 @@ public class CommonController {
                 env.getProperty("local.server.port"));
     }
 
+
+    @GetMapping("/user-service/CircuitBreakerTest")
+    public ResponseEntity<String> CircuitBreakerTest() {
+        String test = userService.CircuitBreakerTest();
+        return ResponseEntity.ok(test);
+    }
+
+    @GetMapping("/user-service/bulkheadTest")
+    public ResponseEntity<String> bulkheadTest() {
+        return ResponseEntity.ok(userService.bulkheadTest());
+    }
 }
