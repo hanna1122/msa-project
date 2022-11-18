@@ -17,6 +17,7 @@ import com.project.gym.repository.AttendanceRepository;
 import com.project.gym.repository.AttendanceRepositoryCustom;
 import com.project.gym.repository.TicketRepository;
 import com.project.gym.repository.TicketRepositoryCustom;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -87,14 +88,16 @@ public class GymService {
                 .collect(Collectors.toList());
     }
 
-    public TicketDto getTicket(Long ticketId){
+    @RateLimiter(name = "gymService", fallbackMethod = "gymFallback")
+    public Result getTicket(Long ticketId){
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(()-> new CustomException(HttpStatus.CONFLICT, "ticket not found"));
 
-        return TicketDto.of(ticket);
+        return Result.createSuccessResult(TicketDto.of(ticket));
     }
 
-    public Attendance saveAttendance(String userId){
+    @RateLimiter(name = "gymService", fallbackMethod = "gymFallback")
+    public Result saveAttendance(String userId){
         Result<UserResponse> userResponse = userServiceClient.getUser(userId);
         if (Result.Code.ERROR.equals(userResponse.getCode())) {
             // error
@@ -118,7 +121,7 @@ public class GymService {
         Attendance attendance = Attendance.builder()
                 .userId(userId)
                 .build();
-        return attendanceRepository.save(attendance);
+        return Result.createSuccessResult(attendanceRepository.save(attendance));
     }
 
     public void updateCount(Long ticketId, Long reservationId, String reservationStatus){
@@ -138,5 +141,10 @@ public class GymService {
             log.info("reservation-rollback 이벤트 발신 : {} ", event);
             kafkaReservationTemplate.send("reservation-rollback-topic", event);
         }
+    }
+
+    private Result gymFallback(Throwable t) {
+        String message = "fallback invoked! exception type : " + t.getClass();
+        return Result.createErrorResult(message);
     }
 }

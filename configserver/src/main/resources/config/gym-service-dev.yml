@@ -1,7 +1,6 @@
 jwt:
   secretKey: jwtpassword
 
-
 spring:
   kafka:
     producer:
@@ -23,6 +22,15 @@ spring:
             value:
               delegate:
                 class: com.project.gym.message.consumer.CustomDeserializer
+
+
+resilience4j:
+  ratelimiter:
+    instances:
+      gymService:
+        limitForPeriod: 3
+        limitRefreshPeriod: 10s
+        timeoutDuration: 1s
 
 
 
