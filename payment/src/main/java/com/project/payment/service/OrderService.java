@@ -60,7 +60,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Async("asyncExecutor")
+    @Async("updateOrderAsync")
     public Order updateOrder(Long orderId, OrderStatus orderStatus){
 
         Order order = orderRepository.findById(orderId)

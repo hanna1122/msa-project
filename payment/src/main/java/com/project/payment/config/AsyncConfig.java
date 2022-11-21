@@ -10,16 +10,15 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
-public class AsyncConfig implements AsyncConfigurer {
+public class AsyncConfig{
 
-    @Bean(name = "asyncExecutor")
-    @Override
+    @Bean(name = "updateOrderAsync")
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(5);
         executor.setQueueCapacity(10);
-        executor.setBeanName("asyncExecutor");
+        executor.setBeanName("updateOrderAsync");
         executor.initialize();
         return executor;
     }

@@ -3,6 +3,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
 	id 'java'
 	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'com.epages.restdocs-api-spec' version '0.11.4'
 }
 
 group = 'com.project'
@@ -36,7 +37,6 @@ dependencies {
 	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client'
 
 	// Spring Security 추가
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// jwt 추가
@@ -53,8 +53,29 @@ dependencies {
 
 	implementation 'com.google.code.gson:gson:2.9.0'
 
+
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.11.4'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	//kafka
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	//querydsl
 	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'com.querydsl:querydsl-apt'
+
+	testImplementation("org.junit.platform:junit-platform-launcher:1.5.2")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+
+	//resilience4j
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation "io.github.resilience4j:resilience4j-spring-boot2"
+	implementation "io.github.resilience4j:resilience4j-ratelimiter"
+
+	// zipkin, sleuth
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
 }
 
 dependencyManagement {
@@ -67,6 +88,19 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+openapi3 {
+	server = 'http://localhost:8080'
+	title = 'User API'
+	description = 'User Api Description'
+	// tagDescriptionsPropertiesFile = 'src/docs/tag-descriptions.yaml'
+	version = '0.1.0'
+	format = 'yaml'
+	copy {
+		from "build/api-spec"
+		into "src/main/resources/static/docs/"
+	}
+}
+
 //querydsl 추가
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -77,24 +111,17 @@ querydsl {
 }
 
 sourceSets {
-	main {
-		java {
-			srcDirs = ['src/main/java', querydslDir]
-		}
-	}
+	main.java.srcDir querydslDir
 }
-
-compileQuerydsl{
-	options.annotationProcessorPath = configurations.querydsl
-}
-
 configurations {
 	querydsl.extendsFrom compileClasspath
 }
-
-/* comileQuerydsl.doFirst 추가: 재컴파일 시 q파일을 모두 지우도록 */
-compileQuerydsl.doFirst {
-	if(file(querydslDir).exists())
-		delete(file(querydslDir))
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
 }
+//compileQuerydsl.doFirst {
+//	if(file(querydslDir).exists() )
+//		delete(file(querydslDir))
+//}
+
 //querydsl 추가 끝
