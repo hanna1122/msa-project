@@ -87,6 +87,7 @@ services:
     environment:
       CONFIG_SERVER_URI: "http://configserver:8071"
       EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+      SPRING.ZIPKIN.BASE-URL: "http://zipkin:9411"
     ports:
       - "8081:8072"
     networks:
@@ -120,6 +121,7 @@ services:
     environment:
       CONFIG_SERVER_URI: "http://configserver:8071"
       EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+      SPRING.ZIPKIN.BASE-URL: "http://zipkin:9411"
     ports:
       - "8083:8072"
     networks:
@@ -153,6 +155,7 @@ services:
     environment:
       CONFIG_SERVER_URI: "http://configserver:8071"
       EUREKA_SERVER_URI: "http://eurekaserver:8761/eureka"
+      SPRING.ZIPKIN.BASE-URL: "http://zipkin:9411"
     ports:
       - "8085:8072"
     networks:

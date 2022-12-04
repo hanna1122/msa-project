@@ -60,12 +60,16 @@ dependencies {
 	//kafka
 	implementation 'org.springframework.kafka:spring-kafka'
 
-	//resilience4j 추가가
-implementation 'org.springframework.boot:spring-boot-starter-aop'
+	//resilience4j 추가
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 	implementation "io.github.resilience4j:resilience4j-spring-boot2"
 	implementation "io.github.resilience4j:resilience4j-ratelimiter"
 	implementation "io.github.resilience4j:resilience4j-bulkhead"
+
+	//zipkin, sleuth
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
 }
 
 dependencyManagement {

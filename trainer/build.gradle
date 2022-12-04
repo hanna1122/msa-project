@@ -2,7 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
 	id 'java'
-	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'com.epages.restdocs-api-spec' version '0.11.4'
 }
 
 group = 'com.project'
@@ -53,8 +53,20 @@ dependencies {
 
 	implementation 'com.google.code.gson:gson:2.9.0'
 
-	implementation 'com.querydsl:querydsl-jpa'
-	implementation 'com.querydsl:querydsl-apt'
+
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.11.4'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	testImplementation("org.junit.platform:junit-platform-launcher:1.5.2")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+
+	//kafka 추가
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	//zipkin, sleuth
+	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.3.RELEASE'
 }
 
 dependencyManagement {
@@ -67,34 +79,14 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-//querydsl 추가
-def querydslDir = "$buildDir/generated/querydsl"
-
-querydsl {
-	library = "com.querydsl:querydsl-apt"
-	jpa = true
-	querydslSourcesDir = querydslDir
-}
-
-sourceSets {
-	main {
-		java {
-			srcDirs = ['src/main/java', querydslDir]
-		}
+openapi3 {
+	server = 'http://localhost:8080'
+	title = 'User API'
+	description = 'User Api Description'
+	version = '0.1.0'
+	format = 'yaml'
+	copy {
+		from "build/api-spec"
+		into "src/main/resources/static/docs/"
 	}
 }
-
-compileQuerydsl{
-	options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-	querydsl.extendsFrom compileClasspath
-}
-
-/* comileQuerydsl.doFirst 추가: 재컴파일 시 q파일을 모두 지우도록 */
-compileQuerydsl.doFirst {
-	if(file(querydslDir).exists())
-		delete(file(querydslDir))
-}
-//querydsl 추가 끝
