@@ -37,8 +37,8 @@
 > - MSA 간 통신을 위한 Feign Client 구현(완료)
 > - Kafka를 사용한 Event-Driven 아키텍처 구현(완료)
 > - Resilience4j를 사용한 회복성 패턴 구현(완료)
-> - Spring Cloud Sleuth와 Zipkin을 이용한 분산 추적 구현(진행중)
-> - CI/CD 무중단 배포 환경 구축(미완료)
+> - Spring Cloud Sleuth와 Zipkin을 이용한 분산 추적 구현(완료)
+> - CI/CD 무중단 배포 환경 구축(진행중)
 
 
 # 트랜잭션 처리
